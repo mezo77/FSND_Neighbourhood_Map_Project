@@ -143,7 +143,7 @@ function showTheInfoWindow(marker, infowindow) {
             infowindow.setContent('<div>' + marker.title + '</div>' +
               '<div>No Street View Found</div><div id="rating">Foursquare Rating: '+marker.rating+'</div>');
           }
-        } // end of getStreetView() function
+        }; // end of getStreetView() function
 
       // we will use the street view service to get the closest streetview image within
       // 50 meters of the marker position
@@ -202,39 +202,51 @@ var ViewModel = function() {
     // pushing the marker to the marker[]
     markers.push(marker);
     // create onclick event to open an infowindow for each marker by clicking on it
-    marker.addListener('click', function(){
-      showTheInfoWindow(this, theInfoWindow);
-      makeMeBounce(this);
-
-    });
-
-
-    // function to make markers bounce
-    function makeMeBounce(marker) {
-      marker.setAnimation(google.maps.Animation.BOUNCE);
-      window.setTimeout(function(){
-        marker.setAnimation(null);
-      }, 1400);
-    }
-
-    // function to show windowinfo of a marker when user clicks on place name in the list
-    this.showMarker = function(marker) {
-      showTheInfoWindow(marker, theInfoWindow);
-      makeMeBounce(marker);
-    };
-
+    marker.addListener('click', markerClickListener(marker, theInfoWindow));
 
 
     // event liteners for changing the marker colors
-    marker.addListener('mouseover', function() {
-          this.setIcon(highLightedIcon);
-        });
-        marker.addListener('mouseout', function() {
-          this.setIcon(defaultIcon);
-        });
+    marker.addListener('mouseover', markerMouseOver(marker, highLightedIcon));
+
+    marker.addListener('mouseout', markerMouseOut(marker, defaultIcon));
     bounds.extend(markers[i].position);
 
   } // end of for loop
+
+// a callback function for marker clicklitener
+function markerClickListener(marker, theInfoWindow) {
+  return function() {
+    showTheInfoWindow(marker, theInfoWindow);
+    makeMeBounce(marker);
+  };
+}
+
+// a callback functions for mouseover and mouseout litener
+function markerMouseOver(marker, highLightedIcon){
+  return function() {
+    marker.setIcon(highLightedIcon);
+  };
+}
+
+function markerMouseOut(marker, defaultIcon) {
+  return function() {
+    marker.setIcon(defaultIcon);
+  };
+}
+
+  // function to show windowinfo of a marker when user clicks on place name in the list
+  this.showMarker = function(marker) {
+    showTheInfoWindow(marker, theInfoWindow);
+    makeMeBounce(marker);
+  };
+
+  // function to make markers bounce
+  function makeMeBounce(marker) {
+    marker.setAnimation(google.maps.Animation.BOUNCE);
+    window.setTimeout(function(){
+      marker.setAnimation(null);
+    }, 1400);
+  }
 
   map.fitBounds(bounds);
 
