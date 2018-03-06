@@ -16,6 +16,7 @@ var locations = [
 
 // initializing the google map
 var map;
+var marker;
 var markers = [];
 function initMap(){
 
@@ -104,6 +105,8 @@ function onError() {
   alert("An error has been occured, please try again");
   }
 
+
+  var  getStreetView = function(data,status){};
 // this function will show the InfoWindow when the marker is clicked
 function showTheInfoWindow(marker, infowindow) {
   if(infowindow.marker != marker) {
@@ -121,7 +124,7 @@ function showTheInfoWindow(marker, infowindow) {
       // it will compute the position of the streetview image, then after calculating the heading
       // we will get the panorama from that and set the options
       // Hint: this code from udacity google maps course
-      function getStreetView(data, status) {
+       getStreetView = function(data, status) {
           if (status == google.maps.StreetViewStatus.OK) {
             var nearStreetViewLocation = data.location.latLng;
             var heading = google.maps.geometry.spherical.computeHeading(
@@ -184,7 +187,7 @@ var ViewModel = function() {
     var animation = google.maps.Animation.DROP;
 
     // create a marker for each location and put it in the markers[]
-    var marker = new google.maps.Marker({
+     marker = new google.maps.Marker({
       map: map,
       position: position,
       title: title,
@@ -210,7 +213,7 @@ var ViewModel = function() {
     function makeMeBounce(marker) {
       marker.setAnimation(google.maps.Animation.BOUNCE);
       window.setTimeout(function(){
-        marker.setAnimation(null)
+        marker.setAnimation(null);
       }, 1400);
     }
 
@@ -218,28 +221,9 @@ var ViewModel = function() {
     this.showMarker = function(marker) {
       showTheInfoWindow(marker, theInfoWindow);
       makeMeBounce(marker);
-    }
+    };
 
-    // getting the rating of each marker
-    markers.forEach(function(marker) {
-      // AJAX request for foursquare API
-      $.ajax({
-        method: 'GET',
-        dataType: 'json',
-        url: "https://api.foursquare.com/v2/venues/" + marker.venue + "?client_id=K045K5J2JL5JPXX1ORNQ2LMV2ZHR000KBGFD4Q4ZEMADJF4N&client_secret=UPYX2VZCQHNCFK0SPAUOAQD5NNC4OE0RK21V4ZVT0TXSEWUJ&v=20180306",
-        success: function(data) {
-          var venue = data.response.venue;
-          if(venue.hasOwnProperty('rating')){
-            marker.rating = venue.rating;
-          } else {
-            marker.rating = 'No rating found';
-          }
-        },
-        error: function() {
-          alert("something went wrong");
-        }
-      });
-    });
+
 
     // event liteners for changing the marker colors
     marker.addListener('mouseover', function() {
@@ -255,6 +239,26 @@ var ViewModel = function() {
   map.fitBounds(bounds);
 
 
+  // getting the rating of each marker
+  markers.forEach(function(marker) {
+    // AJAX request for foursquare API
+    $.ajax({
+      method: 'GET',
+      dataType: 'json',
+      url: "https://api.foursquare.com/v2/venues/" + marker.venue + "?client_id=K045K5J2JL5JPXX1ORNQ2LMV2ZHR000KBGFD4Q4ZEMADJF4N&client_secret=UPYX2VZCQHNCFK0SPAUOAQD5NNC4OE0RK21V4ZVT0TXSEWUJ&v=20180306",
+      success: function(data) {
+        var venue = data.response.venue;
+        if(venue.hasOwnProperty('rating')){
+          marker.rating = venue.rating;
+        } else {
+          marker.rating = 'No rating found';
+        }
+      },
+      error: function() {
+        alert("something went wrong");
+      }
+    });
+  });
 
 
 
