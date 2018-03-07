@@ -1,5 +1,4 @@
 
-"use strict";
 
 // the list of the locations that will be shown to the user ( the model)
 var locations = [
