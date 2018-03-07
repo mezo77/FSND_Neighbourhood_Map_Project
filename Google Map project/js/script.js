@@ -1,4 +1,6 @@
 
+"use strict";
+
 // the list of the locations that will be shown to the user ( the model)
 var locations = [
   {title: 'Cairo tower', location: {lat: 30.045949, lng: 31.224291}, foursquareId: '506efd98e4b0723f1c418f03'},
@@ -20,7 +22,7 @@ var marker;
 var markers = [];
 function initMap(){
 
-// this style form udacity nano degree course about google maps
+// this style from udacity nano degree course about google maps
   var styles = [
           {
             featureType: 'water',
